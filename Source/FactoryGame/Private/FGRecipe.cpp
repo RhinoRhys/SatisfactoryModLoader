@@ -3,12 +3,20 @@
 #include "FGRecipe.h"
 
 #if WITH_EDITOR
+bool UFGRecipe::CanEditChange(const FProperty* InProperty) const{ return bool(); }
+EDataValidationResult UFGRecipe::IsDataValid(TArray<FText>& ValidationErrors){ return EDataValidationResult(); }
+#endif 
+#if WITH_EDITOR
 void UFGRecipe::SetProduct(TSubclassOf< UFGRecipe > recipe, TArray< FItemAmount > product) {
 	if(recipe)
 		recipe.GetDefaultObject()->mProduct = product;
 }
 #endif 
-UFGRecipe::UFGRecipe(){ }
+UFGRecipe::UFGRecipe() : Super() {
+	this->mManufactoringDuration = 1;
+	this->mManualManufacturingMultiplier = 1;
+	this->mVariablePowerConsumptionFactor = 1;
+}
 FText UFGRecipe::GetRecipeName(TSubclassOf< UFGRecipe > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mDisplayName;
@@ -27,6 +35,8 @@ TArray< FItemAmount > UFGRecipe::GetProducts(TSubclassOf< UFGRecipe > inClass, b
 	else
 		return TArray< FItemAmount >();
 }
+TSubclassOf< UFGItemCategory > UFGRecipe::GetCategory(TSubclassOf< UFGRecipe > inClass){ return TSubclassOf<UFGItemCategory>(); }
+float UFGRecipe::GetManufacturingMenuPriority(TSubclassOf< UFGRecipe > inClass){ return float(); }
 float UFGRecipe::GetManufacturingDuration(TSubclassOf< UFGRecipe > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mManufactoringDuration;
@@ -61,6 +71,7 @@ TArray< TSubclassOf< UObject > > UFGRecipe::GetProducedIn(TSubclassOf< UFGRecipe
 bool UFGRecipe::HasAnyProducers(TSubclassOf< UFGRecipe > inClass){ return bool(); }
 bool UFGRecipe::IsRecipeAffordable( AFGCharacterPlayer* player, TSubclassOf<  UFGRecipe > recipe){ return bool(); }
 void UFGRecipe::SortByName(TArray< TSubclassOf< UFGRecipe > >& recipes){ }
+void UFGRecipe::SortByManufacturingMenuPriority(TArray< TSubclassOf< UFGRecipe > >& recipes){ }
 TSubclassOf< class UFGItemDescriptor > UFGRecipe::GetDescriptorForRecipe(TSubclassOf<  UFGRecipe > recipe){ return TSubclassOf<class UFGItemDescriptor>(); }
 TArray< EEvents > UFGRecipe::GetRelevantEvents(TSubclassOf< UFGRecipe > inClass){ return TArray<EEvents>(); }
 FText UFGRecipe::GetDisplayName() const{ return FText(); }

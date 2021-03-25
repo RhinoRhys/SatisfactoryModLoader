@@ -1,6 +1,5 @@
 #include "SatisfactoryModLoader.h"
 #include "Toolkit/AssetTypes/AssetHelper.h"
-#include "Configuration/ConfigManager.h"
 #include "Toolkit/AssetTypes/FbxMeshExporter.h"
 #include "Toolkit/OldToolkit/FGAssetDumper.h"
 #include "FGPlayerController.h"
@@ -8,20 +7,19 @@
 #include "Configuration/Legacy/LegacyConfigurationHelper.h"
 #include "Toolkit/AssetTypes/MaterialAssetSerializer.h"
 #include "Registry/ModContentRegistry.h"
-#include "ModLoading/ModHandler.h"
 #include "Network/NetworkHandler.h"
 #include "Registry/RemoteCallObjectRegistry.h"
 #include "Network/SMLConnection/SMLNetworkManager.h"
 #include "Player/SMLRemoteCallObject.h"
 #include "Registry/SubsystemHolderRegistry.h"
-#include "Patching/Patch/CrashContextPatch.h"
 #include "Patching/Patch/MainMenuPatch.h"
 #include "Patching/Patch/OfflinePlayerHandler.h"
 #include "Patching/Patch/OptionsKeybindPatch.h"
 #include "Player/PlayerCheatManagerHandler.h"
+#include "Toolkit/OldToolkit/FGNativeClassDumper.h"
 
 extern "C" DLLEXPORT const TCHAR* modLoaderVersionString = TEXT("3.0.0");
-extern "C" DLLEXPORT const long targetGameVersion = 137570;
+extern "C" DLLEXPORT const long targetGameVersion = 147126;
 
 DEFINE_LOG_CATEGORY(LogSatisfactoryModLoader);
 
@@ -144,13 +142,14 @@ void FSatisfactoryModLoader::RegisterSubsystems() {
 
         //Register asset dumping related console commands
         FGameAssetDumper::RegisterConsoleCommands();
+        FGameNativeClassDumper::RegisterConsoleCommands();
     }
 }
 
 void FSatisfactoryModLoader::PreInitializeModLoading() {
     UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Satisfactory Mod Loader v.%s pre-initializing..."), modLoaderVersionString);
 
-    //Don't try to save configuration in the editor, because it will make new folders with no real reason
+    //Don't try to save configuration in the editor, because it will make new folders for no real reason
     const bool bAllowSavingConfiguration = !WITH_EDITOR;
     LoadSMLConfiguration(bAllowSavingConfiguration);
 
@@ -159,20 +158,6 @@ void FSatisfactoryModLoader::PreInitializeModLoading() {
     if (FPlatformProperties::RequiresCookedData()) {
         CheckGameVersion();
     }
-
-    //Initialize ModHandler and perform mods discovery and pre initialization
-    ModHandlerPrivate = MakeShareable(new FModHandler());
-    
-    //Perform mod discovery and check for stage errors
-    UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Performing mod discovery"));
-    ModHandlerPrivate->DiscoverMods();
-
-    UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Performing mod sorting"));
-    ModHandlerPrivate->PerformModListSorting();
-
-    //Register crash context patch very early, but after mod loading
-    //So debug symbols can be flushed now from loaded native modules
-    FCrashContextPatch::RegisterPatch();
 
     //Register these patches early so no materials/meshes loaded will skip them
     //They will slow down game performance because of hooking in hot spots + extra memory consumption on CPU
@@ -197,27 +182,16 @@ void FSatisfactoryModLoader::PreInitializeModLoading() {
 void FSatisfactoryModLoader::InitializeModLoading() {
     UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Performing mod loader initialization"));
 
+    //Install patches, but only do it in shipping for now because most of them involve FactoryGame code and
+    //we currently do not have FG code available in the editor
+    if (FPlatformProperties::RequiresCookedData()) {
+        UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Registering subsystem patches..."));
+        RegisterSubsystemPatches();
+    }
+    
     //Setup SML subsystems and custom content registries
-    UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Registering subsystem patches..."));
-    RegisterSubsystemPatches();
     UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Registering global subsystems..."));
     RegisterSubsystems();
-
-    //Subscribe to world lifecycle event for mod initializers
-    ModHandlerPrivate->SubscribeToWorldEvents();
-
-    //Perform actual mod loading
-    UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Initializing mods"));
-    ModHandlerPrivate->InitializeMods();
-
-    //Initialize game instance subsystems and give mods opportunity to register global content
-    UGameInstance* GameInstance = Cast<UGameEngine>(GEngine)->GameInstance;
-    ModHandlerPrivate->InitializeGameInstanceModules(GameInstance);
-
-    //Reload configuration manager to handle mod configs
-    UConfigManager* ConfigManager = GEngine->GetEngineSubsystem<UConfigManager>();
-    ConfigManager->ReloadModConfigurations(true);
-    ModHandlerPrivate->PostInitializeGameInstanceModules(GameInstance);
 
     UE_LOG(LogSatisfactoryModLoader, Display, TEXT("Initialization finished!"));
 }

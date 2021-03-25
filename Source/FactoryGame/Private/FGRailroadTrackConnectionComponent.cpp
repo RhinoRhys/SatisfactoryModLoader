@@ -2,7 +2,11 @@
 
 #include "FGRailroadTrackConnectionComponent.h"
 
-UFGRailroadTrackConnectionComponent::UFGRailroadTrackConnectionComponent(){ }
+UFGRailroadTrackConnectionComponent::UFGRailroadTrackConnectionComponent() : Super() {
+	this->mSwitchPosition = -1;
+	this->bNetAddressable = true;
+	this->SetIsReplicatedByDefault(true);
+}
 void UFGRailroadTrackConnectionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const{ }
 void UFGRailroadTrackConnectionComponent::OnComponentDestroyed(bool isDestroyingHierarchy){ }
 void UFGRailroadTrackConnectionComponent::PostLoadGame_Implementation(int32 saveVersion, int32 gameVersion){ }
@@ -22,4 +26,5 @@ void UFGRailroadTrackConnectionComponent::SetTrackPosition(const FRailroadTrackP
 void UFGRailroadTrackConnectionComponent::SortConnections(){ }
 void UFGRailroadTrackConnectionComponent::AddConnectionInternal(UFGRailroadTrackConnectionComponent* toComponent){ }
 void UFGRailroadTrackConnectionComponent::RemoveConnectionInternal(UFGRailroadTrackConnectionComponent* toComponent){ }
+void UFGRailroadTrackConnectionComponent::OnConnectionsChangedInternal(){ }
 void UFGRailroadTrackConnectionComponent::ClampSwitchPosition(){ }

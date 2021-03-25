@@ -2,19 +2,26 @@
 
 #include "FGUnlockSubsystem.h"
 
-AFGUnlockSubsystem::AFGUnlockSubsystem(){ }
+AFGUnlockSubsystem::AFGUnlockSubsystem() : Super() {
+	this->mNumTotalInventorySlots = 18;
+	this->mNumTotalArmEquipmentSlots = 1;
+	this->bAlwaysRelevant = true;
+	this->SetReplicates(true);
+}
 void AFGUnlockSubsystem::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const{ }
 void AFGUnlockSubsystem::PostLoadGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 AFGUnlockSubsystem* AFGUnlockSubsystem::Get(UWorld* world){ return nullptr; }
 AFGUnlockSubsystem* AFGUnlockSubsystem::Get(UObject* worldContext){ return nullptr; }
 void AFGUnlockSubsystem::Init(){ }
 void AFGUnlockSubsystem::UnlockRecipe(TSubclassOf<  UFGRecipe > recipe){ }
-void AFGUnlockSubsystem::UnlockScannableResource(TSubclassOf<  UFGResourceDescriptor > newResource){ }
+void AFGUnlockSubsystem::UnlockScannableResource(FScannableResourcePair newResource){ }
 void AFGUnlockSubsystem::UnlockMap(){ }
 void AFGUnlockSubsystem::UnlockBuildEfficiency(){ }
 void AFGUnlockSubsystem::UnlockBuildOverclock(){ }
 void AFGUnlockSubsystem::UnlockInventorySlots(int32 numSlotsToUnlock){ }
 void AFGUnlockSubsystem::UnlockArmEquipmentSlots(int32 numSlotsToUnlock){ }
+TArray<TSubclassOf<class UFGResourceDescriptor>> AFGUnlockSubsystem::GetScannableResources() const{ return TArray<TSubclassOf<class UFGResourceDescriptor>>(); }
+bool AFGUnlockSubsystem::IsNodeScannable(FScannableResourcePair scannableResourcePair){ return bool(); }
 void AFGUnlockSubsystem::OnSchematicPurchased(TSubclassOf<  UFGSchematic > newSchematic){ }
 void AFGUnlockSubsystem::SetTotalNumInventorySlots(int32 totalNumSlots){ }
 void AFGUnlockSubsystem::SetTotalNumArmEquipmentSlots(int32 totalNumSlots){ }

@@ -28,7 +28,13 @@ UFGItemDescriptor::FGenerateIconContext::FGenerateIconContext(){ }
 bool UFGItemDescriptor::FGenerateIconContext::IsValid() const{ return bool(); }
 UFGItemDescriptor::FGenerateIconContext UFGItemDescriptor::GenerateIconContext = UFGItemDescriptor::FGenerateIconContext();
 #endif 
-UFGItemDescriptor::UFGItemDescriptor(){ }
+UFGItemDescriptor::UFGItemDescriptor() : Super() {
+	this->mUseDisplayNameAndDescription = true;
+	this->mStackSize = EStackSize::SS_MEDIUM;
+	this->mCanBeDiscarded = true;
+	this->mForm = EResourceForm::RF_SOLID;
+	this->mItemIndex = -1;
+}
 void UFGItemDescriptor::Serialize(FArchive& ar){ Super::Serialize(ar); }
 void UFGItemDescriptor::PostLoad(){ Super::PostLoad(); }
 EResourceForm UFGItemDescriptor::GetForm(TSubclassOf< UFGItemDescriptor > inClass) {
@@ -127,6 +133,8 @@ FLinearColor UFGItemDescriptor::GetFluidColorLinear(TSubclassOf< UFGItemDescript
 	else
 		return FLinearColor();
 }
+FColor UFGItemDescriptor::GetGasColor(TSubclassOf< UFGItemDescriptor > inClass){ return FColor(); }
+FLinearColor UFGItemDescriptor::GetGasColorLinear(TSubclassOf< UFGItemDescriptor > inClass){ return FLinearColor(); }
 FTransform UFGItemDescriptor::GetIconCameraTransform(TSubclassOf< UFGItemDescriptor > inClass) {
 	if (inClass)
 #if WITH_EDITOR

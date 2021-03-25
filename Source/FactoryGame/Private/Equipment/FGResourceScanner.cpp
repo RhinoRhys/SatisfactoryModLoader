@@ -2,7 +2,16 @@
 
 #include "Equipment/FGResourceScanner.h"
 
-AFGResourceScanner::AFGResourceScanner(){ }
+AFGResourceScanner::AFGResourceScanner() : Super() {
+	this->mNrOfClosestClustersToMark = 3;
+	this->mHoldDownDurationForUI = 0.5;
+	this->mDistBetweenNodesInCluster = 1000;
+	this->mArmAnimation = EArmEquipment::AE_ResourceScanner;
+	this->PrimaryActorTick.TickGroup = TG_PrePhysics; this->PrimaryActorTick.EndTickGroup = TG_PrePhysics; this->PrimaryActorTick.bTickEvenWhenPaused = false; this->PrimaryActorTick.bCanEverTick = true; this->PrimaryActorTick.bStartWithTickEnabled = false; this->PrimaryActorTick.bAllowTickOnDedicatedServer = true; this->PrimaryActorTick.TickInterval = 0;
+	this->bOnlyRelevantToOwner = true;
+	this->bNetUseOwnerRelevancy = true;
+	this->SetReplicates(true);
+}
 void AFGResourceScanner::BeginPlay(){ }
 void AFGResourceScanner::Tick(float dt){ }
 bool AFGResourceScanner::ShouldSaveState() const{ return bool(); }
@@ -16,5 +25,5 @@ void AFGResourceScanner::AddEquipmentActionBindings(){ }
 void AFGResourceScanner::OnScanPressed(){ }
 void AFGResourceScanner::OnScanReleased(){ }
 void AFGResourceScanner::GenerateNodeClusters(){ }
-void AFGResourceScanner::GetNodesWithinDistance(AFGResourceNode* node, float dist, TArray< AFGResourceNode* >& clusterNodes, TArray< AFGResourceNode* >& remainingNodes){ }
+void AFGResourceScanner::GetNodesWithinDistance( AFGResourceNodeBase* node, float dist, TArray<  AFGResourceNodeBase* >& clusterNodes, TArray<  AFGResourceNodeBase* >& remainingNodes){ }
 void AFGResourceScanner::OnCheatBoardOpened(){ }

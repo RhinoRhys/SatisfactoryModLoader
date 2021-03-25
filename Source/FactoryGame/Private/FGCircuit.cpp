@@ -6,7 +6,9 @@ void UFGCircuit::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLife
 bool UFGCircuit::IsSupportedForNetworking() const{ return bool(); }
 bool UFGCircuit::IsNameStableForNetworking() const{ return bool(); }
 void UFGCircuit::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker){ }
-UFGCircuit::UFGCircuit(){ }
+UFGCircuit::UFGCircuit() : Super() {
+	this->mCircuitID = -1;
+}
 void UFGCircuit::BeginDestroy(){ Super::BeginDestroy(); }
 void UFGCircuit::PreSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void UFGCircuit::PostSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
@@ -20,10 +22,11 @@ void UFGCircuit::MarkAsChanged(){ }
 void UFGCircuit::MarkForFullRebuild(){ }
 void UFGCircuit::RegisterInteractingPlayer( AFGCharacterPlayer* player){ }
 void UFGCircuit::UnregisterInteractingPlayer( AFGCharacterPlayer* player){ }
+void UFGCircuit::Debug_LogState() const{ }
+bool UFGCircuit::IsTrivial() const{ return bool(); }
 bool UFGCircuit::HasAuthority() const{ return bool(); }
 AFGCircuitSubsystem* UFGCircuit::GetOwningCircuitSubsystem() const{ return nullptr; }
 void UFGCircuit::TickCircuit(float dt){ }
 void UFGCircuit::OnCircuitChanged(){ }
 void UFGCircuit::DisplayDebug( UCanvas* canvas, const  FDebugDisplayInfo& debugDisplay, float& YL, float& YPos, float indent){ }
-void UFGCircuit::Debug_LogState() const{ }
 void UFGCircuit::SetReplicateDetails(bool replicateDetails){ }

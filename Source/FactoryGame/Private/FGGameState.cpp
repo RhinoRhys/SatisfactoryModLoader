@@ -2,10 +2,15 @@
 
 #include "FGGameState.h"
 
-AFGGameState::AFGGameState(){ }
+AFGGameState::AFGGameState() : Super() {
+	this->mReplicatedOnlineSessionName = "Auto";
+	this->mPlannedRestartTime = 24;
+	this->PrimaryActorTick.TickGroup = TG_PrePhysics; this->PrimaryActorTick.EndTickGroup = TG_PrePhysics; this->PrimaryActorTick.bTickEvenWhenPaused = true; this->PrimaryActorTick.bCanEverTick = true; this->PrimaryActorTick.bStartWithTickEnabled = true; this->PrimaryActorTick.bAllowTickOnDedicatedServer = true; this->PrimaryActorTick.TickInterval = 5;
+}
 void AFGGameState::Serialize(FArchive& ar){ Super::Serialize(ar); }
 void AFGGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const{ }
 void AFGGameState::Tick(float delta){ }
+void AFGGameState::EndPlay(const EEndPlayReason::Type EndPlayReason){ }
 void AFGGameState::PreSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void AFGGameState::PostSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void AFGGameState::PreLoadGame_Implementation(int32 saveVersion, int32 gameVersion){ }
@@ -41,8 +46,10 @@ bool AFGGameState::Server_SetBuildingColorInSlotLinear_Validate(uint8 slotIdx, F
 uint8 AFGGameState::GetNbColorSlotsExposedToPlayers(){ return uint8(); }
 FLinearColor AFGGameState::GetBuildingColorPrimary_Linear(uint8 slot){ return FLinearColor(); }
 FLinearColor AFGGameState::GetBuildingColorSecondary_Linear(uint8 slot){ return FLinearColor(); }
+void AFGGameState::Server_SetBuildableLightColorSlot_Implementation(uint8 slotIdx, FLinearColor color){ }
 void AFGGameState::OnRep_BuildingColorSlotPrimary_Linear(){ }
 void AFGGameState::OnRep_BuildingColorSlotSecondary_Linear(){ }
+void AFGGameState::OnRep_BuildableLightColorSlots(){ }
 void AFGGameState::ClaimPlayerColor( AFGPlayerState* playerState){ }
 void AFGGameState::ReleasePlayerColor( AFGPlayerState* playerState){ }
 void AFGGameState::ItemPickedUp(TSubclassOf<  UFGItemDescriptor > itemClass){ }

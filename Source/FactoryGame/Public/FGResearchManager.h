@@ -1,4 +1,4 @@
-// Copyright 2016-2018 Coffee Stain Studios. All Rights Reserved.
+// Copyright Coffee Stain Studios. All Rights Reserved.
 
 #pragma once
 
@@ -257,6 +257,7 @@ protected:
 	/** Checks if a research tree is valid for addition to the available research trees list. */
 	bool CanAddToAvailableResearchTrees( TSubclassOf< UFGResearchTree > researchTree ) const;
 
+public: // MODDING EDIT
 	/** Whether multiple concurrent research can be conducted, or only one at a time. */
 	UPROPERTY( EditDefaultsOnly, Category = "Research" )
 	bool mCanConductMultipleResearch;

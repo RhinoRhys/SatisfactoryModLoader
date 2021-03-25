@@ -20,7 +20,10 @@ FInventoryStack::FInventoryStack(int32 numItems, TSubclassOf<  UFGItemDescriptor
 void UFGInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const{ }
 void UFGInventoryComponent::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker){ }
 void UFGInventoryComponent::PreNetReceive(){ }
-UFGInventoryComponent::UFGInventoryComponent(){ }
+UFGInventoryComponent::UFGInventoryComponent() : Super() {
+	this->mDefaultInventorySize = 1;
+	this->mCanBeRearrange = true;
+}
 void UFGInventoryComponent::Serialize(FArchive& ar){ Super::Serialize(ar); }
 void UFGInventoryComponent::PreSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void UFGInventoryComponent::PostSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
@@ -40,6 +43,7 @@ bool UFGInventoryComponent::HasAuthority() const{ return bool(); }
 bool UFGInventoryComponent::IsItemAllowed(TSubclassOf< UFGItemDescriptor > item, const int32 idx) const{ return bool(); }
 bool UFGInventoryComponent::IsValidIndex(int32 idx) const{ return bool(); }
 int32 UFGInventoryComponent::FindEmptyIndex() const{ return int32(); }
+int32 UFGInventoryComponent::GetFirstIndexWithItem(int32 StartIndex) const{ return int32(); }
 int32 UFGInventoryComponent::AddStack(const FInventoryStack& stack, bool allowPartialAdd){ return int32(); }
 void UFGInventoryComponent::AddStacks(const TArray< FInventoryStack >& stacks){ }
 int32 UFGInventoryComponent::AddStackToIndex(int32 idx, const FInventoryStack& stack, bool allowPartial){ return int32(); }
@@ -58,7 +62,7 @@ bool UFGInventoryComponent::HasEnoughSpaceForStack(const FInventoryStack& stack)
 void UFGInventoryComponent::SetStateOnIndex(int32 index, const FSharedInventoryStatePtr& itemState){ }
 int32 UFGInventoryComponent::GetFullestStackIndex(){ return int32(); }
 void UFGInventoryComponent::GetInventoryStacks(TArray< FInventoryStack >& out_stacks) const{ }
-TArray<int32> UFGInventoryComponent::GetRelevantStackIndexes(TArray< TSubclassOf<  UFGItemDescriptor > > relevantClasses, int32 stackLimit){ return TArray<int32>(); }
+TArray<int32> UFGInventoryComponent::GetRelevantStackIndexes(TArray< TSubclassOf<  UFGItemDescriptor > > relevantClasses, int32 stackLimit , bool sortResult){ return TArray<int32>(); }
 void UFGInventoryComponent::AddArbitrarySlotSize(int32 index, int32 arbitrarySlotSize){ }
 void UFGInventoryComponent::RemoveArbitrarySlotSize(int32 index){ }
 int32 UFGInventoryComponent::GetSlotSize(int32 index, TSubclassOf< UFGItemDescriptor > itemDesc) const{ return int32(); }

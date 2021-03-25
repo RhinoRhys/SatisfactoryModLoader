@@ -5,7 +5,11 @@
 FHotbar::FHotbar( AFGPlayerState* owningState, const FHotbar& hotbar){ }
 FHotbar::FHotbar(TArray<  UFGHotbarShortcut* > hotbarShortcuts){ }
 FPresetHotbar::FPresetHotbar( AFGPlayerState* owningState, const FPresetHotbar& presetHotbar){ }
-AFGPlayerState::AFGPlayerState(){ }
+AFGPlayerState::AFGPlayerState() : Super() {
+	this->mSlotNum = -1;
+	this->mNumArmSlots = 1;
+	this->NetUpdateFrequency = 10;
+}
 void AFGPlayerState::Serialize(FArchive& ar){ Super::Serialize(ar); }
 void AFGPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const{ }
 bool AFGPlayerState::ReplicateSubobjects( UActorChannel* channel,  FOutBunch* bunch, FReplicationFlags* repFlags){ return bool(); }
@@ -66,6 +70,11 @@ bool AFGPlayerState::Server_SetCompassFilter_Validate(ERepresentationType repres
 void AFGPlayerState::UpdateOwningPawnActorRepresentation() const{ }
 void AFGPlayerState::DumpHotbars(){ }
 void AFGPlayerState::UpdateNumObservedInventorySlots(){ }
+bool AFGPlayerState::IsShopFavorite(TSubclassOf<class UFGSchematic> schematic) const{ return bool(); }
+TArray<TSubclassOf<class UFGSchematic>> AFGPlayerState::GetShopFavorites() const{ return TArray<TSubclassOf<class UFGSchematic>>(); }
+void AFGPlayerState::SaveAsShopFavorite(TSubclassOf<class UFGSchematic> schematic){ }
+void AFGPlayerState::RemoveAsShopFavorite(TSubclassOf<class UFGSchematic> schematic){ }
+void AFGPlayerState::RemoveAllShopFavorites(){ }
 void AFGPlayerState::OnRep_HotbarShortcuts(){ }
 void AFGPlayerState::OnRep_CurrentHotbarIndex(){ }
 void AFGPlayerState::Server_UpdateNumObservedInventorySlots_Implementation(){ }

@@ -2,9 +2,15 @@
 
 #include "FGLocalPlayer.h"
 
-UFGEM_LoggedOutFromOnlineService::UFGEM_LoggedOutFromOnlineService(){ }
-UFGEM_LostConnectionWithOnlineService::UFGEM_LostConnectionWithOnlineService(){ }
-UFGEM_FailedToLoginToOnlineService::UFGEM_FailedToLoginToOnlineService(){ }
+UFGEM_LoggedOutFromOnlineService::UFGEM_LoggedOutFromOnlineService() : Super() {
+	this->mErrorMessage = NSLOCTEXT("ErrorMessages", "LoggedOutFromOnlineService", "You were sent back to main menu as you got logged out from the online service. Your game was autosaved. You need to relaunch the game from the launcher to log in again (sorry for the temporary solution).");
+}
+UFGEM_LostConnectionWithOnlineService::UFGEM_LostConnectionWithOnlineService() : Super() {
+	this->mErrorMessage = NSLOCTEXT("ErrorMessages", "LostConnectionWithOnlineService", "You were sent back to main menu as you lost connection with the online service. Your game was autosaved. You need to relaunch the game from the launcher to log in again (sorry for the temporary solution).");
+}
+UFGEM_FailedToLoginToOnlineService::UFGEM_FailedToLoginToOnlineService() : Super() {
+	this->mErrorMessage = NSLOCTEXT("ErrorMessages", "FailedToLoginToOnlineService", "Failed to log into the online service. You need to relaunch the game from the launcher to log in again (sorry for the temporary solution).");
+}
 FFGOnlineFriend::FFGOnlineFriend(){ }
 FFGOnlineFriend::FFGOnlineFriend(TSharedRef<FOnlineFriend> onlineFriend){ }
 void FSessionInformation::Init(const FString& InMapName, const FString& InOptions, const FString& InSessionName, ESessionVisibility InVisibility){ }
@@ -15,7 +21,7 @@ UFGLocalPlayer::UFGLocalPlayer(){ }
 void UFGLocalPlayer::PlayerAdded( UGameViewportClient* inViewportClient, int32 inControllerID){ }
 void UFGLocalPlayer::PlayerRemoved(){ }
 void UFGLocalPlayer::SubscribeToOptionUpdates(){ }
-void UFGLocalPlayer::OnMaintainYAxisFOVUpdated(){ }
+void UFGLocalPlayer::OnMaintainYAxisFOVUpdated(FString updatedCvar){ }
 TEnumAsByte<ELoginState> UFGLocalPlayer::GetLoginState() const{ return TEnumAsByte<ELoginState>(); }
 FString UFGLocalPlayer::GetUsername() const{ return FString(); }
 FString UFGLocalPlayer::GetUsernameEpic() const{ return FString(); }

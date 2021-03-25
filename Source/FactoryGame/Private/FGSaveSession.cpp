@@ -2,9 +2,12 @@
 
 #include "FGSaveSession.h"
 
-UFGSaveSession::UFGSaveSession(){ }
+UFGSaveSession::UFGSaveSession() : Super() {
+	this->mNumRotatingAutosaves = 3;
+}
 UFGSaveSession::~UFGSaveSession(){ }
 void UFGSaveSession::Init(bool willLoad){ }
+void UFGSaveSession::OnAutosaveIntervalUpdated(FString cvar){ }
 UFGSaveSession* UFGSaveSession::Get( UWorld* world){ return nullptr; }
 UFGSaveSession* UFGSaveSession::Get( UObject* worldContext){ return nullptr; }
 void UFGSaveSession::RoutePostLoadGame(){ }

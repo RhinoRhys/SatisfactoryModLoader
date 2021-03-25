@@ -4,15 +4,21 @@
 
 #if WITH_EDITOR
 void UFGSchematic::PreSave(const  ITargetPlatform* targetPlatform){ }
+EDataValidationResult UFGSchematic::IsDataValid(TArray<FText>& ValidationErrors){ return EDataValidationResult(); }
+#endif 
+#if WITH_EDITOR
+void UFGSchematic::UpdateAssetBundleData(){ }
 #endif 
 #if WITH_EDITOR
 void UFGSchematic::AddRecipe(TSubclassOf< UFGSchematic > inClass, TSubclassOf<  UFGRecipe > recipe){ }
 void UFGSchematic::MigrateDataToNewDependencySystem(){ }
 #endif 
-#if WITH_EDITOR
-void UFGSchematic::UpdateAssetBundleData(){ }
-#endif 
-UFGSchematic::UFGSchematic(){ }
+UFGSchematic::UFGSchematic() : Super() {
+	this->mTimeToComplete = 600;
+}
+void UFGSchematic::PostLoad(){ Super::PostLoad(); }
+void UFGSchematic::Serialize(FArchive& ar){ Super::Serialize(ar); }
+FPrimaryAssetId UFGSchematic::GetPrimaryAssetId() const{ return FPrimaryAssetId(); }
 ESchematicType UFGSchematic::GetType(TSubclassOf< UFGSchematic > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mType;
@@ -25,6 +31,7 @@ FText UFGSchematic::GetSchematicDisplayName(TSubclassOf< UFGSchematic > inClass)
 	else
 		return FText();
 }
+FText UFGSchematic::GetSchematicDescription(TSubclassOf< UFGSchematic > inClass){ return FText(); }
 TSubclassOf< class UFGSchematicCategory > UFGSchematic::GetSchematicCategory(TSubclassOf< UFGSchematic > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mSchematicCategory;
@@ -35,6 +42,7 @@ void UFGSchematic::GetSubCategories(TSubclassOf< UFGSchematic > inClass,  TArray
 	if(inClass)
 		out_subCategories = inClass.GetDefaultObject()->mSubCategories;
 }
+float UFGSchematic::GetMenuPriority(TSubclassOf< UFGSchematic > inClass){ return float(); }
 TArray< FItemAmount > UFGSchematic::GetCost(TSubclassOf< UFGSchematic > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mCost;
@@ -59,17 +67,18 @@ float UFGSchematic::GetTimeToComplete(TSubclassOf< UFGSchematic > inClass) {
 	else
 		return float();
 }
+void UFGSchematic::GetRelevantUnlockedShopSchematics(UObject* worldContext, TSubclassOf< UFGSchematic > inClass, TArray< TSubclassOf< UFGSchematic > >& out_schematics){ }
+void UFGSchematic::GetRelevantShopSchematics(TSubclassOf< UFGSchematic > inClass, TArray< TSubclassOf< UFGSchematic > >& out_schematics){ }
 FSlateBrush UFGSchematic::GetItemIcon(TSubclassOf< UFGSchematic > inClass) {
 	if (inClass)
 		return inClass.GetDefaultObject()->mSchematicIcon;
 	else
 		return FSlateBrush();
 }
+UTexture2D* UFGSchematic::GetSmallIcon(TSubclassOf< UFGSchematic > inClass){ return nullptr; }
 bool UFGSchematic::AreSchematicDependenciesMet(TSubclassOf< UFGSchematic > inClass, UObject* worldContext){ return bool(); }
 void UFGSchematic::GetSchematicDependencies(TSubclassOf< UFGSchematic > inClass, TArray<  UFGAvailabilityDependency* >& out_schematicDependencies){ }
 bool UFGSchematic::IsRepeatPurchasesAllowed(TSubclassOf< UFGSchematic > inClass){ return bool(); }
+void UFGSchematic::SortByMenuPriority(TArray< TSubclassOf< UFGSchematic > >& schematics){ }
 TArray< EEvents > UFGSchematic::GetRelevantEvents(TSubclassOf< UFGSchematic > inClass){ return TArray<EEvents>(); }
 bool UFGSchematic::IsIncludedInBuild(TSubclassOf< UFGSchematic > inClass){ return bool(); }
-void UFGSchematic::PostLoad(){ Super::PostLoad(); }
-void UFGSchematic::Serialize(FArchive& ar){ Super::Serialize(ar); }
-FPrimaryAssetId UFGSchematic::GetPrimaryAssetId() const{ return FPrimaryAssetId(); }

@@ -2,7 +2,6 @@
 #include "Patching/Patch/OptionsKeybindPatch.h"
 #include "Patching/BlueprintHookHelper.h"
 #include "Patching/BlueprintHookManager.h"
-#include "ModLoading/ModHandler.h"
 #include "Reflection/ReflectionHelper.h"
 #include "SatisfactoryModLoader.h"
 #include "Components/TextBlock.h"
@@ -11,6 +10,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Engine/Engine.h"
 #include "Engine/UserDefinedStruct.h"
+#include "ModLoading/ModLoadingLibrary.h"
 
 void FOptionsKeybindPatch::CategorizeKeyBindingsByModReference(FScriptArrayHelper& InKeyBindings, UScriptStruct* KeyBindStructClass, TMap<FString, TArray<int32>>& OutCategorizedNames) {
     UNameProperty* ActionNameProperty = FReflectionHelper::FindPropertyByShortNameChecked<UNameProperty>(KeyBindStructClass, TEXT("ActionName"));
@@ -37,11 +37,12 @@ void FOptionsKeybindPatch::CategorizeKeyBindingsByModReference(FScriptArrayHelpe
 }
 
 void FOptionsKeybindPatch::SortModReferencesByDisplayName(TArray<FString>& InModReferences, TMap<FString, FString>& OutDisplayNames) {
-    FModHandler* ModHandler = FSatisfactoryModLoader::GetModHandler();
     for (const FString& ModReference : InModReferences) {
-        const FModContainer* ModContainer = ModHandler->GetLoadedMod(ModReference);
-        checkf(ModContainer, TEXT("%s"), *ModReference);
-        OutDisplayNames.Add(ModReference, ModContainer->ModInfo.Name);
+        FModInfo ModInfo;
+        UModLoadingLibrary* ModLoadingLibrary = GEngine->GetEngineSubsystem<UModLoadingLibrary>();
+        check(ModLoadingLibrary->GetLoadedModInfo(ModReference, ModInfo));
+        
+        OutDisplayNames.Add(ModReference, ModInfo.FriendlyName);
     }
     InModReferences.StableSort([&](const FString& A, const FString& B){
         const FString& ModNameA = OutDisplayNames.FindChecked(A);
@@ -86,7 +87,7 @@ void FOptionsKeybindPatch::HandleRefreshKeyBindingsHook(FBlueprintHookHelper& Ho
     
     //Retrieve key bindings by calling blueprint method
     FScriptArray OutKeyBindDataArray;
-    UFunction* Function = FReflectionHelper::CallScriptFunction(HookHelper.GetContext(), TEXT("GetKeybindData"), OutKeyBindDataArray);
+    UFunction* Function = FReflectionHelper::CallScriptFunction(HookHelper.GetContext(), TEXT("GetKeybindData"), &OutKeyBindDataArray);
     UArrayProperty* FirstParameter = Cast<UArrayProperty>(FReflectionHelper::FindParameterByIndex(Function, 0));
     FScriptArrayHelper KeyBindingsArrayHelper(FirstParameter, &OutKeyBindDataArray);
     
@@ -111,10 +112,11 @@ void FOptionsKeybindPatch::HandleRefreshKeyBindingsHook(FBlueprintHookHelper& Ho
 }
 
 void FOptionsKeybindPatch::RegisterPatch() {
-    UClass* WidgetKeyBindClass = LoadObject<UClass>(NULL, TEXT("/Game/FactoryGame/Interface/UI/Menu/PauseMenu/Widget_KeyBind.Widget_KeyBind_C"));
-    check(WidgetKeyBindClass);
-    UFunction* RefreshKeyBindingsFunction = WidgetKeyBindClass->FindFunctionByName(TEXT("RefreshKeyBindings"));
-    UBlueprintHookManager* HookManager = GEngine->GetEngineSubsystem<UBlueprintHookManager>();
-    HookManager->HookBlueprintFunction(RefreshKeyBindingsFunction, HandleRefreshKeyBindingsHook, EPredefinedHookOffset::Start);
+    //TODO fix once we get the fresh dump of blueprints
+    //UClass* WidgetKeyBindClass = LoadObject<UClass>(NULL, TEXT("/Game/FactoryGame/Interface/UI/Menu/PauseMenu/Widget_KeyBind.Widget_KeyBind_C"));
+    //check(WidgetKeyBindClass);
+    //UFunction* RefreshKeyBindingsFunction = WidgetKeyBindClass->FindFunctionByName(TEXT("RefreshKeyBindings"));
+    //UBlueprintHookManager* HookManager = GEngine->GetEngineSubsystem<UBlueprintHookManager>();
+    //HookManager->HookBlueprintFunction(RefreshKeyBindingsFunction, HandleRefreshKeyBindingsHook, EPredefinedHookOffset::Start);
 }
 

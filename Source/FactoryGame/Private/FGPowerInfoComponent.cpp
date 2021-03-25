@@ -4,7 +4,10 @@
 
 void UFGPowerInfoComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const{ }
 void UFGPowerInfoComponent::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker){ }
-UFGPowerInfoComponent::UFGPowerInfoComponent(){ }
+UFGPowerInfoComponent::UFGPowerInfoComponent() : Super() {
+	this->mCircuitID = -1;
+	this->SetIsReplicatedByDefault(true);
+}
 void UFGPowerInfoComponent::PreSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void UFGPowerInfoComponent::PostSaveGame_Implementation(int32 saveVersion, int32 gameVersion){ }
 void UFGPowerInfoComponent::PreLoadGame_Implementation(int32 saveVersion, int32 gameVersion){ }
@@ -24,5 +27,9 @@ void UFGPowerInfoComponent::SetDynamicProductionCapacity(float newProduction){ }
 float UFGPowerInfoComponent::GetDynamicProductionCapacity() const{ return float(); }
 float UFGPowerInfoComponent::GetDynamicProductionDemandFactor() const{ return float(); }
 float UFGPowerInfoComponent::GetRegulatedDynamicProduction() const{ return float(); }
+void UFGPowerInfoComponent::SetFullBlast(bool isFullBlast){ }
+bool UFGPowerInfoComponent::IsFullBlast() const{ return bool(); }
 void UFGPowerInfoComponent::SetCircuitID(int32 circuitID){ }
+void UFGPowerInfoComponent::InitializeBatteryInfo(float powerStoreCapacity, float powerInputCapacity){ }
 void UFGPowerInfoComponent::DisplayDebug( UCanvas* canvas, const  FDebugDisplayInfo& debugDisplay, float& YL, float& YPos){ }
+void UFGPowerInfoComponent::SetHasPower(bool hasPower){ }
